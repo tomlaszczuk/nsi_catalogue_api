@@ -8,6 +8,11 @@ class PromotionSerializer(serializers.ModelSerializer):
 
     links = serializers.SerializerMethodField()
     process_segmentation_display = serializers.SerializerMethodField()
+    tariff_plans = serializers.SlugRelatedField(
+        many=True,
+        slug_field='code',
+        queryset=TariffPlan.objects.all()
+    )
 
     class Meta:
         model = Promotion
@@ -15,15 +20,24 @@ class PromotionSerializer(serializers.ModelSerializer):
                   'agreement_length', 'process_segmentation',
                   'process_segmentation_display', 'market',
                   'offer_segmentation', 'is_active', 'activation_fee',
-                  'sim_only', 'links')
+                  'sim_only', 'tariff_plans', 'links')
 
     def get_links(self, obj):
         request = self.context['request']
-        return {
+        links = {
             'self': reverse(
                 'promotion-detail', kwargs={'code': obj.code}, request=request
-            )
+            ),
+            'tariff_plans': None
         }
+        tariff_plans = [
+            reverse('tariffplan-detail', kwargs={'code': t.code},
+                    request=request) for t in obj.tariff_plans.all()
+            ]
+
+        if tariff_plans:
+            links['tariff_plans'] = tariff_plans
+        return links
 
     def get_process_segmentation_display(self, obj):
         display = obj.get_process_segmentation_display().split()
@@ -40,11 +54,19 @@ class TariffPlanSerializer(serializers.ModelSerializer):
 
     def get_links(self, obj):
         request = self.context['request']
-        return {
+        links = {
             'self': reverse(
                 'tariffplan-detail', kwargs={'code': obj.code}, request=request
-            )
+            ),
+            'promotions': None
         }
+        promotions = [
+            reverse('promotion-detail', kwargs={'code': p.code},
+                    request=request) for p in obj.promotions.all()
+        ]
+        if promotions:
+            links['promotions'] = promotions
+        return links
 
 
 class ProductSerializer(serializers.ModelSerializer):
