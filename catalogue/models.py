@@ -72,3 +72,24 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         self.full_name = "{0} {1}".format(self.manufacturer, self.model_name)
+
+    def __str__(self):
+        return self.full_name
+
+
+class SKU(models.Model):
+
+    AVAILABILITY_CHOICES = (
+        'Dostępny', 'AVAILABLE',
+        'Kończy się', 'RUNNING_OUT',
+        'Nie dostępny', 'NOT_AVAILABLE'
+    )
+
+    product = models.ForeignKey(Product, related_name='skus')
+    stock_code = models.SlugField(unique=True)
+    color = models.CharField(max_length=50, blank=True, default='')
+    availability = models.CharField(max_length=30)
+    photo = models.URLField(blank=True)
+
+    def __str__(self):
+        return self.stock_code
