@@ -28,3 +28,19 @@ class PromotionSerializer(serializers.ModelSerializer):
     def get_process_segmentation_display(self, obj):
         display = obj.get_process_segmentation_display().split()
         return ', '.join(['%s' % ' '.join(item.split('_')) for item in display])
+
+
+class TariffPlanSerializer(serializers.ModelSerializer):
+
+    links = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TariffPlan
+        fields = ('name', 'description', 'code', 'monthly_fee', 'links')
+
+    def get_links(self, obj):
+        return {
+            'self': reverse(
+                'tariffplan-detail', kwargs={'code': obj.code}, request=request
+            )
+        }
