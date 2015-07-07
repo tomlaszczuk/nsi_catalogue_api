@@ -87,3 +87,44 @@ class SKUSerializer(serializers.ModelSerializer):
                 'product_detail', kwargs={'pk': obj.product_id}, request=request
             )
         }
+
+
+class OfferSerializer(serializers.ModelSerializer):
+    links = serializers.SerializerMethodField()
+    sku = serializers.SlugRelatedField(
+        slug_field=SKU.stock_code, required=False, read_only=True
+    )
+    promotion = serializers.SlugRelatedField(
+        slug_field=Promotion.code, required=False, read_only=True
+    )
+    tariff_plan = serializers.SlugRelatedField(
+        slug_field=TariffPlan.code, required=False, read_only=True
+    )
+    sim_only = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Offer
+        fields = ('sku', 'promotion', 'tariff_plan', 'price', 'sim_only',
+                  'priority', 'product_page', 'crc_id', 'links')
+
+    def get_links(self, obj):
+        request = self.context['request']
+        links = {
+            'self': reverse('offer-detail', kwargs={'crc_id': obj.crc_id},
+                            request=request),
+            'sku': None,
+            'promotion': reverse('promotion-detail',
+                                 kwargs={'code': obj.promotion.code},
+                                 request=request),
+            'tariff_plan': reverse('tariffplan-detail',
+                                   kwargs={'code': obj.tariff_plan.code},
+                                   request=request),
+        }
+        if obj.sku:
+            links['sku'] = reverse('sku-detail',
+                                   kwargs={'stock_code': obj.sku.stock_code},
+                                   request=request)
+        return links
+
+    def get_sim_only(self, obj):
+        return obj.promotion.sim_only

@@ -102,7 +102,7 @@ class SKU(models.Model):
 class Offer(models.Model):
     promotion = models.ForeignKey(Promotion, related_name='offers')
     tariff_plan = models.ForeignKey(TariffPlan, related_name='offers')
-    sku = models.ForeignKey(SKU)
+    sku = models.ForeignKey(SKU, blank=True, null=True, default=None)
     price = models.FloatField(blank=True, null=True, default=None)
     priority = models.IntegerField(default=1)
     crc_id = models.IntegerField(blank=True, null=True, default=None)
