@@ -33,3 +33,12 @@ class Promotion(models.Model):
 
     def save(self, *args, **kwargs):
         self.market = self.process_segmentation.split('.')[0]
+
+
+class TariffPlan(models.Model):
+    promotions = models.ManyToManyField(Promotion, related_name='tariff_plans',
+                                        blank=True)
+    name = models.CharField(max_length=100, blank=True, default='')
+    description = models.CharField(max_length=255, blank=True, default='')
+    code = models.CharField(max_length=10, unique=True)
+    monthly_fee = models.FloatField()
