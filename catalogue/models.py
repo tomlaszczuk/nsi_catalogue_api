@@ -56,12 +56,12 @@ class TariffPlan(models.Model):
 class Product(models.Model):
 
     PRODUCT_TYPE_CHOICES = (
-        'PHONE', 'Telefon',
-        'MODEM', 'Modem/Router',
-        'SIM_CARD', 'Starter',
-        'RETAIL', 'Konsola',
-        'BUNDLE', 'Zestaw',
-        'TAB', 'Tablet/Laptop'
+        ('PHONE', 'Telefon'),
+        ('MODEM', 'Modem/Router'),
+        ('SIM_CARD', 'Starter'),
+        ('RETAIL', 'Konsola'),
+        ('BUNDLE', 'Zestaw'),
+        ('TAB', 'Tablet/Laptop'),
     )
 
     model_name = models.CharField(max_length=100)
@@ -84,9 +84,9 @@ class Product(models.Model):
 class SKU(models.Model):
 
     AVAILABILITY_CHOICES = (
-        'Dostępny', 'AVAILABLE',
-        'Kończy się', 'RUNNING_OUT',
-        'Nie dostępny', 'NOT_AVAILABLE'
+        ('AVAILABLE', 'Dostępny'),
+        ('RUNNING_OUT', 'Kończy się'),
+        ('NOT_AVAILABLE', 'Nie dostępny'),
     )
 
     product = models.ForeignKey(Product, related_name='skus')
