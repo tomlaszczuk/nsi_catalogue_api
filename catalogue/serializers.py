@@ -63,3 +63,27 @@ class ProductSerializer(serializers.ModelSerializer):
                 'product-detail', kwargs={'pk': obj.pk}, request=request
             )
         }
+
+
+class SKUSerializer(serializers.ModelSerializer):
+    links = serializers.SerializerMethodField()
+    product = serializers.SlugRelatedField(
+        slug_field=Product.full_name, required=False, read_only=True
+    )
+
+    class Meta:
+        model = SKU
+        fields = ('product', 'links', 'stock_code', 'color',
+                  'availability', 'photo')
+
+    def get_links(self, obj):
+        request = self.context['request']
+        return {
+            'self': reverse(
+                'sku-detail', kwargs={'stock_code': obj.stock_code},
+                request=request
+            ),
+            'product': reverse(
+                'product_detail', kwargs={'pk': obj.product_id}, request=request
+            )
+        }
