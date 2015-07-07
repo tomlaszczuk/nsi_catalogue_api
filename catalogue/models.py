@@ -160,7 +160,7 @@ class Offer(models.Model):
         else:
             self.product_page = self.generate_product_page_url(
                 deviceStockCode=self.sku.stock_code,
-                deviceTypeCode=self.sku.product.type,
+                deviceTypeCode=self.sku.product.product_type,
                 offerNSICode=self.promotion.code,
                 tariffPlanCode=self.tariff_plan.code,
                 marketTypeCode=self.promotion.market,

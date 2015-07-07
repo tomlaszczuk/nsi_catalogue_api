@@ -67,9 +67,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class SKUSerializer(serializers.ModelSerializer):
     links = serializers.SerializerMethodField()
-    product = serializers.SlugRelatedField(
-        slug_field=Product.full_name, required=False, read_only=True
-    )
+    product = serializers.SlugRelatedField(slug_field='full_name',
+                                           queryset=Product.objects.all())
 
     class Meta:
         model = SKU
@@ -84,7 +83,7 @@ class SKUSerializer(serializers.ModelSerializer):
                 request=request
             ),
             'product': reverse(
-                'product_detail', kwargs={'pk': obj.product_id}, request=request
+                'product-detail', kwargs={'pk': obj.product_id}, request=request
             )
         }
 
@@ -92,14 +91,12 @@ class SKUSerializer(serializers.ModelSerializer):
 class OfferSerializer(serializers.ModelSerializer):
     links = serializers.SerializerMethodField()
     sku = serializers.SlugRelatedField(
-        slug_field=SKU.stock_code, required=False, read_only=True
+        slug_field='stock_code', required=False, queryset=SKU.objects.all()
     )
-    promotion = serializers.SlugRelatedField(
-        slug_field=Promotion.code, required=False, read_only=True
-    )
+    promotion = serializers.SlugRelatedField(slug_field='code',
+                                             queryset=Promotion.objects.all())
     tariff_plan = serializers.SlugRelatedField(
-        slug_field=TariffPlan.code, required=False, read_only=True
-    )
+        slug_field='code', queryset=TariffPlan.objects.all())
     sim_only = serializers.SerializerMethodField()
 
     class Meta:

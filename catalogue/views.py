@@ -20,18 +20,18 @@ class PromotionViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """
     queryset = Promotion.objects.order_by('is_active')
     serializer_class = PromotionSerializer
-    lookup_field = Promotion.code
-    lookup_url_kwarg = Promotion.code
+    lookup_field = 'code'
+    lookup_url_kwarg = 'code'
 
 
-class TariffPlanViewSet(DefaultsMixin,viewsets.ModelViewSet):
+class TariffPlanViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """
     API endpoints for listing and creating tariffplans
     """
     queryset = TariffPlan.objects.all()
     serializer_class = TariffPlanSerializer
-    lookup_field = TariffPlan.code
-    lookup_url_kwarg = TariffPlan.code
+    lookup_field = 'code'
+    lookup_url_kwarg = 'code'
 
 
 class ProductViewSet(DefaultsMixin, viewsets.ModelViewSet):
@@ -46,17 +46,19 @@ class SKUViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """
     API endpoints for listing and creating SKUs
     """
-    queryset = SKU.objects.order_by('stock_code')
+    queryset = SKU.objects.order_by('stock_code').prefetch_related('product')
     serializer_class = SKUSerializer
-    lookup_url_kwarg = SKU.stock_code
-    lookup_field = SKU.stock_code
+    lookup_url_kwarg = 'stock_code'
+    lookup_field = 'stock_code'
 
 
 class OfferViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """
     API endpoints for listing and creating Offers
     """
-    queryset = Offer.objects.all()
+    queryset = Offer.objects.all().prefetch_related(
+        'promotion', 'tariff_plan', 'sku'
+    )
     serializer_class = OfferSerializer
-    lookup_url_kwarg = Offer.crc_id
-    lookup_field = Offer.crc_id
+    lookup_url_kwarg = 'crc_id'
+    lookup_field = 'crc_id'
