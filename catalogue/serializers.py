@@ -39,8 +39,27 @@ class TariffPlanSerializer(serializers.ModelSerializer):
         fields = ('name', 'description', 'code', 'monthly_fee', 'links')
 
     def get_links(self, obj):
+        request = self.context['request']
         return {
             'self': reverse(
                 'tariffplan-detail', kwargs={'code': obj.code}, request=request
+            )
+        }
+
+
+class ProductSerializer(serializers.ModelSerializer):
+
+    links = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+        fields = ('model_name', 'manufacturer', 'full_name', 'product_type',
+                  'links')
+
+    def get_links(self, obj):
+        request = self.context['request']
+        return {
+            'self': reverse(
+                'product-detail', kwargs={'pk': obj.pk}, request=request
             )
         }
