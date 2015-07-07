@@ -105,11 +105,11 @@ class Offer(models.Model):
     sku = models.ForeignKey(SKU, blank=True, null=True, default=None)
     price = models.FloatField(blank=True, null=True, default=None)
     priority = models.IntegerField(default=1)
-    crc_id = models.IntegerField(blank=True, null=True, default=None)
+    crc_id = models.BigIntegerField(blank=True, null=True, unique=True)
     product_page = models.URLField(blank=True)
 
     def __str__(self):
-        return self.crc_id
+        return str(self.crc_id)
 
     @staticmethod
     def generate_product_page_url(**kwargs):

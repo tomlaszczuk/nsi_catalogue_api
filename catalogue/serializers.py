@@ -91,23 +91,25 @@ class SKUSerializer(serializers.ModelSerializer):
 class OfferSerializer(serializers.ModelSerializer):
     links = serializers.SerializerMethodField()
     sku = serializers.SlugRelatedField(
-        slug_field='stock_code', required=False, queryset=SKU.objects.all()
+        slug_field='stock_code', required=False, queryset=SKU.objects.all(),
+        allow_null=True
     )
-    promotion = serializers.SlugRelatedField(slug_field='code',
-                                             queryset=Promotion.objects.all())
+    promotion = serializers.SlugRelatedField(
+        slug_field='code', queryset=Promotion.objects.filter(is_active=True))
     tariff_plan = serializers.SlugRelatedField(
         slug_field='code', queryset=TariffPlan.objects.all())
     sim_only = serializers.SerializerMethodField()
+    monthly_fee = serializers.SerializerMethodField()
 
     class Meta:
         model = Offer
         fields = ('sku', 'promotion', 'tariff_plan', 'price', 'sim_only',
-                  'priority', 'product_page', 'crc_id', 'links')
+                  'priority', 'product_page', 'crc_id', 'links', 'monthly_fee')
 
     def get_links(self, obj):
         request = self.context['request']
         links = {
-            'self': reverse('offer-detail', kwargs={'crc_id': obj.crc_id},
+            'self': reverse('offer-detail', kwargs={'crc_id': str(obj.crc_id)},
                             request=request),
             'sku': None,
             'promotion': reverse('promotion-detail',
@@ -125,3 +127,6 @@ class OfferSerializer(serializers.ModelSerializer):
 
     def get_sim_only(self, obj):
         return obj.promotion.sim_only
+
+    def get_monthly_fee(self, obj):
+        return obj.tariff_plan.monthly_fee
