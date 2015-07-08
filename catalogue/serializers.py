@@ -181,3 +181,15 @@ class OfferSerializer(serializers.ModelSerializer):
             super(OfferSerializer, self).save(**kwargs)
         except IntegrityError:
             raise serializers.ValidationError("Offer already exists")
+
+    def validate(self, attrs):
+        promotion = attrs.get('promotion')
+        tariff_plan = attrs.get('tariff_plan')
+        promotion_instance = Promotion.objects.get(code=promotion)
+        tariff_plan_instance = TariffPlan.objects.get(code=tariff_plan)
+        tariffs_in_promotion = promotion_instance.tariff_plans.all()
+        if tariff_plan_instance not in tariffs_in_promotion:
+            raise serializers.ValidationError(
+                "Tariffplan not belong in Promotion"
+            )
+        return attrs
