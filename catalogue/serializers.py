@@ -122,6 +122,8 @@ class OfferSerializer(serializers.ModelSerializer):
         slug_field='code', queryset=TariffPlan.objects.all())
     sim_only = serializers.SerializerMethodField()
     monthly_fee = serializers.SerializerMethodField()
+    product_page = serializers.URLField(read_only=True)
+    crc_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Offer
@@ -131,7 +133,7 @@ class OfferSerializer(serializers.ModelSerializer):
     def get_links(self, obj):
         request = self.context['request']
         links = {
-            'self': reverse('offer-detail', kwargs={'crc_id': str(obj.crc_id)},
+            'self': reverse('offer-detail', kwargs={'crc_id': obj.crc_id},
                             request=request),
             'sku': None,
             'promotion': reverse('promotion-detail',
