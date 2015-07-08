@@ -205,7 +205,7 @@ class OfferSerializer(serializers.ModelSerializer):
         tariffs_in_promotion = promotion_instance.tariff_plans.all()
         if tariff_plan_instance not in tariffs_in_promotion:
             raise serializers.ValidationError(
-                "Tariffplan not belong in Promotion"
+                "Tariffplan doesn not belong to Promotion"
             )
         if sku and sim_only:
             raise serializers.ValidationError(

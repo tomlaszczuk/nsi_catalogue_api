@@ -3,6 +3,14 @@ import django_filters
 from .models import Offer, Product, SKU, Promotion, TariffPlan
 
 
+class SimOnlyFilter(django_filters.BooleanFilter):
+
+    def filter(self, qs, value):
+        if value is not None:
+            return qs.filter(**{"%s__sim_only" % self.name: value})
+        return qs
+
+
 class PromotionFilter(django_filters.FilterSet):
 
     class Meta:
@@ -18,6 +26,8 @@ class SKUFilter(django_filters.FilterSet):
 
 
 class OfferFilter(django_filters.FilterSet):
+
+    sim_only = SimOnlyFilter(name='promotion')
 
     class Meta:
         model = Offer
