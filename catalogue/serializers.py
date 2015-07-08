@@ -1,5 +1,8 @@
+from django.db import IntegrityError
+
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+from rest_framework.validators import UniqueValidator, UniqueTogetherValidator
 
 from .models import Promotion, TariffPlan, Product, SKU, Offer
 
@@ -12,6 +15,10 @@ class PromotionSerializer(serializers.ModelSerializer):
         many=True,
         slug_field='code',
         queryset=TariffPlan.objects.all()
+    )
+    code = serializers.CharField(
+        validators=[UniqueValidator(queryset=Promotion.objects.all(),
+                                    message="Promotion code must be unique")]
     )
 
     class Meta:
@@ -47,6 +54,10 @@ class PromotionSerializer(serializers.ModelSerializer):
 class TariffPlanSerializer(serializers.ModelSerializer):
 
     links = serializers.SerializerMethodField()
+    code = serializers.CharField(
+        validators=[UniqueValidator(queryset=TariffPlan.objects.all(),
+                                    message="Tariff code must be unique")]
+    )
 
     class Meta:
         model = TariffPlan
@@ -72,11 +83,17 @@ class TariffPlanSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
 
     links = serializers.SerializerMethodField()
+    full_name = serializers.CharField(read_only=True)
 
     class Meta:
         model = Product
         fields = ('model_name', 'manufacturer', 'full_name', 'product_type',
                   'links')
+        validators = [UniqueTogetherValidator(
+            queryset=Product.objects.all(),
+            fields=('model_name', 'manufacturer'),
+            message="Combination of manufacturer and model name must be unique"
+        )]
 
     def get_links(self, obj):
         request = self.context['request']
@@ -91,6 +108,10 @@ class SKUSerializer(serializers.ModelSerializer):
     links = serializers.SerializerMethodField()
     product = serializers.SlugRelatedField(slug_field='full_name',
                                            queryset=Product.objects.all())
+    stock_code = serializers.SlugField(
+        validators=[UniqueValidator(queryset=SKU.objects.all(),
+                                    message="Stock code must be unique")]
+    )
 
     class Meta:
         model = SKU
@@ -154,3 +175,9 @@ class OfferSerializer(serializers.ModelSerializer):
 
     def get_monthly_fee(self, obj):
         return obj.tariff_plan.monthly_fee
+
+    def save(self, **kwargs):
+        try:
+            super(OfferSerializer, self).save(**kwargs)
+        except IntegrityError:
+            raise serializers.ValidationError("Offer already exists")
