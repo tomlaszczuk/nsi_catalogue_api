@@ -20,10 +20,12 @@ class PromotionSerializer(serializers.ModelSerializer):
         validators=[UniqueValidator(queryset=Promotion.objects.all(),
                                     message="Promotion code must be unique")]
     )
+    is_active = serializers.BooleanField()
+    sim_only = serializers.BooleanField()
 
     class Meta:
         model = Promotion
-        fields = ('name', 'description', 'code', 'contract_condition',
+        fields = ('id', 'name', 'description', 'code', 'contract_condition',
                   'agreement_length', 'process_segmentation',
                   'process_segmentation_display', 'market',
                   'offer_segmentation', 'is_active', 'activation_fee',
@@ -35,7 +37,10 @@ class PromotionSerializer(serializers.ModelSerializer):
             'self': reverse(
                 'promotion-detail', kwargs={'code': obj.code}, request=request
             ),
-            'tariff_plans': None
+            'tariff_plans': None,
+            'offers': reverse(
+                'offer-list', request=request
+            ) + '?promotion={}'.format(obj.code)
         }
         tariff_plans = [
             reverse('tariffplan-detail', kwargs={'code': t.code},
@@ -61,7 +66,7 @@ class TariffPlanSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TariffPlan
-        fields = ('name', 'description', 'code', 'monthly_fee', 'links')
+        fields = ('id', 'name', 'description', 'code', 'monthly_fee', 'links')
 
     def get_links(self, obj):
         request = self.context['request']
@@ -69,7 +74,10 @@ class TariffPlanSerializer(serializers.ModelSerializer):
             'self': reverse(
                 'tariffplan-detail', kwargs={'code': obj.code}, request=request
             ),
-            'promotions': None
+            'promotions': None,
+            'offers': reverse(
+                'offer-list', request=request
+            ) + '?tariffplan={}'.format(obj.code)
         }
         promotions = [
             reverse('promotion-detail', kwargs={'code': p.code},
@@ -87,8 +95,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ('model_name', 'manufacturer', 'full_name', 'product_type',
-                  'links')
+        fields = ('id', 'model_name', 'manufacturer', 'full_name',
+                  'product_type', 'links')
         validators = [UniqueTogetherValidator(
             queryset=Product.objects.all(),
             fields=('model_name', 'manufacturer'),
@@ -100,7 +108,9 @@ class ProductSerializer(serializers.ModelSerializer):
         return {
             'self': reverse(
                 'product-detail', kwargs={'pk': obj.pk}, request=request
-            )
+            ),
+            'skus': reverse(
+                'sku-list', request=request) + '?product={}'.format(obj.id)
         }
 
 
@@ -115,7 +125,7 @@ class SKUSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SKU
-        fields = ('product', 'links', 'stock_code', 'color',
+        fields = ('id', 'product', 'links', 'stock_code', 'color',
                   'availability', 'photo')
 
     def get_links(self, obj):
@@ -127,7 +137,10 @@ class SKUSerializer(serializers.ModelSerializer):
             ),
             'product': reverse(
                 'product-detail', kwargs={'pk': obj.product_id}, request=request
-            )
+            ),
+            'offers': reverse(
+                'offer-list', request=request
+            ) + '?sku={}'.format(obj.stock_code)
         }
 
 
@@ -148,7 +161,7 @@ class OfferSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        fields = ('sku', 'promotion', 'tariff_plan', 'price', 'sim_only',
+        fields = ('id', 'sku', 'promotion', 'tariff_plan', 'price', 'sim_only',
                   'priority', 'product_page', 'crc_id', 'links', 'monthly_fee')
 
     def get_links(self, obj):

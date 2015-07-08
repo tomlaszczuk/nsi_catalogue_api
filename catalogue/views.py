@@ -1,17 +1,23 @@
-from rest_framework import authentication, permissions, viewsets
+from rest_framework import authentication, permissions, viewsets, filters
 
 from .models import Promotion, TariffPlan, Product, SKU, Offer
 from .serializers import (PromotionSerializer, TariffPlanSerializer,
                           ProductSerializer, SKUSerializer, OfferSerializer)
 
+from .forms import OfferFilter, PromotionFilter, SKUFilter
+
 
 class DefaultsMixin(object):
     """
-    Default settings for pagination
+    Default settings for pagination and filters
     """
     paginate_by = 25
     paginate_by_param = 'page_size'
     max_paginate_by = 100
+
+    filter_backends = (
+        filters.DjangoFilterBackend,
+    )
 
 
 class PromotionViewSet(DefaultsMixin, viewsets.ModelViewSet):
@@ -22,6 +28,7 @@ class PromotionViewSet(DefaultsMixin, viewsets.ModelViewSet):
     serializer_class = PromotionSerializer
     lookup_field = 'code'
     lookup_url_kwarg = 'code'
+    filter_class = PromotionFilter
 
 
 class TariffPlanViewSet(DefaultsMixin, viewsets.ModelViewSet):
@@ -50,6 +57,7 @@ class SKUViewSet(DefaultsMixin, viewsets.ModelViewSet):
     serializer_class = SKUSerializer
     lookup_url_kwarg = 'stock_code'
     lookup_field = 'stock_code'
+    filter_class = SKUFilter
 
 
 class OfferViewSet(DefaultsMixin, viewsets.ModelViewSet):
@@ -62,3 +70,4 @@ class OfferViewSet(DefaultsMixin, viewsets.ModelViewSet):
     serializer_class = OfferSerializer
     lookup_url_kwarg = 'crc_id'
     lookup_field = 'crc_id'
+    filter_class = OfferFilter

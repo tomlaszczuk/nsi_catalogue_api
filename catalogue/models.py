@@ -29,9 +29,9 @@ class Promotion(models.Model):
                                             choices=SEGMENT_CHOICES)
     market = models.CharField(max_length=5, blank=True, default='')
     offer_segmentation = models.CharField(max_length=100, blank=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField()
     activation_fee = models.FloatField(null=True, blank=True, default=None)
-    sim_only = models.BooleanField(default=False)
+    sim_only = models.BooleanField()
 
     def save(self, *args, **kwargs):
         self.market = self.process_segmentation.split('.')[0]
