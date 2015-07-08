@@ -185,11 +185,21 @@ class OfferSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         promotion = attrs.get('promotion')
         tariff_plan = attrs.get('tariff_plan')
+        sku = attrs.get('sku')
+        sim_only = Promotion.objects.get(code=promotion).sim_only
         promotion_instance = Promotion.objects.get(code=promotion)
         tariff_plan_instance = TariffPlan.objects.get(code=tariff_plan)
         tariffs_in_promotion = promotion_instance.tariff_plans.all()
         if tariff_plan_instance not in tariffs_in_promotion:
             raise serializers.ValidationError(
                 "Tariffplan not belong in Promotion"
+            )
+        if sku and sim_only:
+            raise serializers.ValidationError(
+                "You can't assign sku for sim only promotion"
+            )
+        elif not sku and not sim_only:
+            raise serializers.ValidationError(
+                "You can't assign no sku for non-sim-only promotion"
             )
         return attrs
