@@ -32,6 +32,7 @@ class Promotion(models.Model):
     is_active = models.BooleanField()
     activation_fee = models.FloatField(null=True, blank=True, default=None)
     sim_only = models.BooleanField()
+    is_smartdom = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         self.market = self.process_segmentation.split('.')[0]

@@ -22,14 +22,15 @@ class PromotionSerializer(serializers.ModelSerializer):
     )
     is_active = serializers.BooleanField()
     sim_only = serializers.BooleanField()
+    is_smartdom = serializers.BooleanField()
 
     class Meta:
         model = Promotion
         fields = ('id', 'name', 'description', 'code', 'contract_condition',
                   'agreement_length', 'process_segmentation',
                   'process_segmentation_display', 'market',
-                  'offer_segmentation', 'is_active', 'activation_fee',
-                  'sim_only', 'tariff_plans', 'links')
+                  'offer_segmentation', 'is_active', 'is_smartdom',
+                  'activation_fee', 'sim_only', 'tariff_plans', 'links')
 
     def get_links(self, obj):
         request = self.context['request']
