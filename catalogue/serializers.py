@@ -119,7 +119,7 @@ class SKUSerializer(serializers.ModelSerializer):
     links = serializers.SerializerMethodField()
     product = serializers.SlugRelatedField(slug_field='full_name',
                                            queryset=Product.objects.all())
-    stock_code = serializers.SlugField(
+    stock_code = serializers.CharField(
         validators=[UniqueValidator(queryset=SKU.objects.all(),
                                     message="Stock code must be unique")]
     )

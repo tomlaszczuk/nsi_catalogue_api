@@ -91,7 +91,7 @@ class SKU(models.Model):
     )
 
     product = models.ForeignKey(Product, related_name='skus')
-    stock_code = models.SlugField(unique=True, max_length=255)
+    stock_code = models.CharField(unique=True, max_length=255)
     color = models.CharField(max_length=50, blank=True, default='')
     availability = models.CharField(max_length=30, choices=AVAILABILITY_CHOICES)
     photo = models.URLField(blank=True)
