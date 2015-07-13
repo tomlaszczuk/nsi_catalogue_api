@@ -63,8 +63,6 @@ class SKUViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """
     queryset = SKU.objects.order_by('stock_code').prefetch_related('product')
     serializer_class = SKUSerializer
-    lookup_url_kwarg = 'stock_code'
-    lookup_field = 'stock_code'
     filter_class = SKUFilter
 
 

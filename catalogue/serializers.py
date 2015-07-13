@@ -133,7 +133,7 @@ class SKUSerializer(serializers.ModelSerializer):
         request = self.context['request']
         return {
             'self': reverse(
-                'sku-detail', kwargs={'stock_code': obj.stock_code},
+                'sku-detail', kwargs={'pk': obj.pk},
                 request=request
             ),
             'product': reverse(
@@ -180,7 +180,7 @@ class OfferSerializer(serializers.ModelSerializer):
         }
         if obj.sku:
             links['sku'] = reverse('sku-detail',
-                                   kwargs={'stock_code': obj.sku.stock_code},
+                                   kwargs={'pk': obj.sku.id},
                                    request=request)
         return links
 
