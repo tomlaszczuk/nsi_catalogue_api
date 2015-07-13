@@ -7,7 +7,7 @@ class Promotion(models.Model):
 
     SEGMENT_CHOICES = (
         ('IND.NEW.POSTPAID.ACQ', 'Abonament Nowy_numer'),
-        ('IND.NEW.POSTPADI.MNP', 'Abonament Przenieś_numer'),
+        ('IND.NEW.POSTPAID.MNP', 'Abonament Przenieś_numer'),
         ('IND.NEW.MIX.ACQ', 'MIX Nowy_numer'),
         ('IND.SUB.MIG.POSTPAID', 'Abonament Przejdź_na_abonament'),
         ('IND.SUB.MIG.MIX', 'MIX Przejdź_na_MIX'),
@@ -91,7 +91,7 @@ class SKU(models.Model):
     )
 
     product = models.ForeignKey(Product, related_name='skus')
-    stock_code = models.SlugField(unique=True)
+    stock_code = models.SlugField(unique=True, max_length=255)
     color = models.CharField(max_length=50, blank=True, default='')
     availability = models.CharField(max_length=30, choices=AVAILABILITY_CHOICES)
     photo = models.URLField(blank=True)
@@ -107,7 +107,7 @@ class Offer(models.Model):
     price = models.FloatField(blank=True, null=True, default=None)
     priority = models.IntegerField(default=1)
     crc_id = models.BigIntegerField(blank=True, null=True, unique=True)
-    product_page = models.URLField(blank=True)
+    product_page = models.URLField(blank=True, max_length=500)
 
     def __str__(self):
         return str(self.crc_id)

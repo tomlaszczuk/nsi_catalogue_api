@@ -78,7 +78,7 @@ class TariffPlanSerializer(serializers.ModelSerializer):
             'promotions': None,
             'offers': reverse(
                 'offer-list', request=request
-            ) + '?tariffplan={}'.format(obj.code)
+            ) + '?tariff_plan={}'.format(obj.code)
         }
         promotions = [
             reverse('promotion-detail', kwargs={'code': p.code},
