@@ -11,6 +11,14 @@ class SimOnlyFilter(django_filters.BooleanFilter):
         return qs
 
 
+class IsActiveFilter(django_filters.BooleanFilter):
+
+    def filter(self, qs, value):
+        if value is not None:
+            return qs.filter(**{"%s__is_active" % self.name: value})
+        return qs
+
+
 class PromotionFilter(django_filters.FilterSet):
 
     class Meta:
@@ -28,6 +36,7 @@ class SKUFilter(django_filters.FilterSet):
 class OfferFilter(django_filters.FilterSet):
 
     sim_only = SimOnlyFilter(name='promotion')
+    is_active = IsActiveFilter(name='promotion')
 
     class Meta:
         model = Offer
