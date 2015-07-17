@@ -108,6 +108,7 @@ class Offer(models.Model):
     priority = models.IntegerField(default=1)
     crc_id = models.BigIntegerField(blank=True, null=True, unique=True)
     product_page = models.URLField(blank=True, max_length=500)
+    old_price = models.FloatField(blank=True, null=True, default=None)
 
     def __str__(self):
         return str(self.crc_id)

@@ -26,11 +26,11 @@ class PromotionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Promotion
-        fields = ('id', 'name', 'description', 'code', 'contract_condition',
-                  'agreement_length', 'process_segmentation',
+        fields = ('id', 'name', 'description', 'code', 'process_segmentation',
                   'process_segmentation_display', 'market',
-                  'offer_segmentation', 'is_active', 'is_smartdom',
-                  'activation_fee', 'sim_only', 'tariff_plans', 'links')
+                  'offer_segmentation', 'contract_condition',
+                  'agreement_length', 'is_active', 'is_smartdom', 'sim_only',
+                  'activation_fee', 'tariff_plans', 'links')
 
     def get_links(self, obj):
         request = self.context['request']
@@ -126,8 +126,8 @@ class SKUSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SKU
-        fields = ('id', 'product', 'links', 'stock_code', 'color',
-                  'availability', 'photo')
+        fields = ('id', 'product', 'stock_code', 'color', 'photo',
+                  'availability', 'links')
 
     def get_links(self, obj):
         request = self.context['request']
@@ -162,8 +162,9 @@ class OfferSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Offer
-        fields = ('id', 'sku', 'promotion', 'tariff_plan', 'price', 'sim_only',
-                  'priority', 'product_page', 'crc_id', 'links', 'monthly_fee')
+        fields = ('id', 'crc_id', 'monthly_fee', 'product_page', 'promotion',
+                  'tariff_plan', 'sku', 'price', 'old_price', 'sim_only',
+                  'priority', 'links')
 
     def get_links(self, obj):
         request = self.context['request']

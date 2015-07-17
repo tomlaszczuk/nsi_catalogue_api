@@ -53,7 +53,7 @@ class ProductViewSet(DefaultsMixin, viewsets.ModelViewSet):
     """
     API endpoints for listing and creating products
     """
-    queryset = Product.objects.order_by('full_name')
+    queryset = Product.objects.order_by('product_type', 'full_name')
     serializer_class = ProductSerializer
 
 
