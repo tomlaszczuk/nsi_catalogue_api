@@ -91,7 +91,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('DBNAME'),
         'USER': os.environ.get('DBUSER'),
-        'PASSWORD': os.environ.get('DBPASSWORD')
+        'PASSWORD': os.environ.get('DBPASSWORD'),
+        'HOST': os.environ.get('DBHOST') or 'localhost'
     }
 }
 
