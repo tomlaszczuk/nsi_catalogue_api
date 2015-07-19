@@ -1,4 +1,7 @@
+import os
+
 from django.core.management.base import BaseCommand
+from django.conf import settings
 
 from lxml import etree
 
@@ -17,5 +20,7 @@ class Command(BaseCommand):
         for offer in offers:
             root.append(create_cheapest_entry(offer))
         xml_str = etree.tostring(root, pretty_print=True, encoding='utf-8')
-        with open('second_test_file.xml', 'wb') as f:
+        with open(
+                os.path.join(settings.XML_FEED_DIR, 'cheapest.xml'), 'wb'
+        ) as f:
             f.write(xml_str)

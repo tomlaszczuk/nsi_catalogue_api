@@ -1,4 +1,7 @@
+import os
+
 from django.core.management.base import BaseCommand, CommandError
+from django.conf import settings
 
 from lxml import etree
 
@@ -18,5 +21,5 @@ class Command(BaseCommand):
         for offer in offers:
             root.append(create_entry(offer))
         xml_str = etree.tostring(root, pretty_print=True, encoding='utf-8')
-        with open('test_file.xml', 'wb') as f:
+        with open(os.path.join(settings.XML_FEED_DIR, 'all.xml'), 'wb') as f:
             f.write(xml_str)
