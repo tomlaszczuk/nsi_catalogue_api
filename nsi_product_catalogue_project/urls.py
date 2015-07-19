@@ -23,5 +23,6 @@ from catalogue.urls import router
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(router.urls)),
-    url(r'^api/token/', obtain_auth_token, name='api-token')
+    url(r'^api/token/', obtain_auth_token, name='api-token'),
+    url(r'', include('feed_handler.urls'))
 ]

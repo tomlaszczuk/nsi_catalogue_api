@@ -46,6 +46,7 @@ THIRD_PARTY_APPS = (
 
 LOCAL_APPS = (
     'catalogue',
+    'feed_handler',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -67,7 +68,7 @@ ROOT_URLCONF = 'nsi_product_catalogue_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
