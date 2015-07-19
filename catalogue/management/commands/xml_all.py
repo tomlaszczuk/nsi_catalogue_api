@@ -14,7 +14,7 @@ class Command(BaseCommand):
         offers = Offer.objects.filter(
             promotion__is_active=True).prefetch_related('sku', 'tariff_plan',
                                                         'promotion')
-        root = create_root_elem()
+        root = create_root_elem('products')
         for offer in offers:
             root.append(create_entry(offer))
         xml_str = etree.tostring(root, pretty_print=True, encoding='utf-8')

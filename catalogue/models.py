@@ -1,6 +1,7 @@
 from binascii import crc32
 
 from django.db import models
+from django.db.models import Min
 
 
 class Promotion(models.Model):
@@ -171,3 +172,29 @@ class Offer(models.Model):
             )
         self.crc_id = self.generate_crc32_id()
         super(Offer, self).save(*args, **kwargs)
+
+    @staticmethod
+    def the_cheapest_offers():
+        cheapest_offers = []
+        products = Product.objects.all()
+        segments = Promotion.SEGMENT_CHOICES
+        all_offers = Offer.objects.all().prefetch_related(
+            'promotion', 'sku', 'tariff_plan')
+        for segment in segments:
+            for product in products:
+                min_price = all_offers.filter(
+                    sku__product=product,
+                    promotion__process_segmentation=segment[0]
+                ).aggregate(Min('price'))['price__min']
+                min_fee = all_offers.filter(
+                    sku__product=product, price=min_price,
+                    promotion__process_segmentation=segment[0]
+                ).aggregate(Min('tariff_plan__monthly_fee'))
+                min_monthly_fee = min_fee['tariff_plan__monthly_fee__min']
+                offers = all_offers.filter(
+                    sku__product=product,
+                    tariff_plan__monthly_fee=min_monthly_fee,
+                    promotion__process_segmentation=segment[0]
+                )
+                cheapest_offers.extend(offers)
+        return cheapest_offers

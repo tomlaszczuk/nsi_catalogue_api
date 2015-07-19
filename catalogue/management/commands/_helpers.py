@@ -1,5 +1,6 @@
 from lxml import etree
 from lxml.etree import CDATA
+from lxml import objectify
 
 from catalogue.models import Promotion
 
@@ -16,8 +17,8 @@ def __create_sub_element(parent, name, element_value=None,
 
 def __interpret_availability(availability):
     if 'NOT' in availability:
-        return "0"
-    return "1"
+        return "0", "true"
+    return "1", "false"
 
 
 def __create_segment_dict():
@@ -63,6 +64,10 @@ def __abo_price(offer_ins):
     return "%.2f zł" % offer_ins.tariff_plan.monthly_fee
 
 
+def __modified_url(url):
+    pass
+
+
 def create_entry(offer_ins):
     product = etree.Element('product')
     product_id = __create_sub_element(product, 'id', str(offer_ins.crc_id))
@@ -74,13 +79,56 @@ def create_entry(offer_ins):
     link = __create_sub_element(product, 'link', CDATA(offer_ins.product_page))
     thumb = __create_sub_element(product, 'thumb', offer_ins.sku.photo)
     status = __create_sub_element(
-        product, 'status', __interpret_availability(offer_ins.sku.availability)
+        product, 'status',
+        __interpret_availability(offer_ins.sku.availability)[0]
     )
     __categorization(product, offer_ins)
     custom = __create_sub_element(product, 'custom_1', __abo_price(offer_ins))
     return product
 
 
-def create_root_elem():
-    root = etree.Element('products')
-    return root
+def __property(parent, attr, value):
+    prop = __create_sub_element(parent, 'property', element_value=None,
+                                attrib='name', attrib_value=attr)
+    val = __create_sub_element(prop, 'value', value)
+    return prop
+
+
+def create_cheapest_entry(offer_ins):
+    product = etree.Element('product')
+    category = "%s-%s" % (
+        offer_ins.promotion.process_segmentation.replace('.', '-'),
+        offer_ins.sku.product.product_type
+    )
+    product.attrib['id'] = "%s-%s" % (
+        offer_ins.sku.stock_code,
+        category
+    )
+    name = __create_sub_element(product, 'name',
+                                offer_ins.sku.product.full_name)
+    price = __create_sub_element(product, 'price', str(offer_ins.price),
+                                 'currency', 'PLN')
+    nsi_url = __create_sub_element(product, 'NSI_URL', offer_ins.product_page)
+    url = __create_sub_element(product, 'URL',
+                               __modified_url(offer_ins.product_page))
+    images = __create_sub_element(product, 'images')
+    image = __create_sub_element(images, 'image', offer_ins.sku.photo)
+    description = __create_sub_element(product, 'description', CDATA(''))
+    properties = __create_sub_element(product, 'properties')
+    __property(properties, 'manufacturer', offer_ins.sku.product.manufacturer)
+    __property(properties, 'category', category)
+    __property(properties, 'modified_url',
+               __modified_url(offer_ins.product_page))
+    __property(properties, 'country', 'Poland')
+    __property(properties, 'deliveryCosts', '0.00')
+    __property(properties, 'abo_price', str(offer_ins.tariff_plan.monthly_fee))
+    __property(properties, 'available', offer_ins.sku.availability)
+    __property(properties, 'available_for_order',
+               __interpret_availability(offer_ins.sku.availability)[1])
+    __property(properties, 'processSegmentationCode',
+               offer_ins.promotion.process_segmentation)
+    return product
+
+
+def create_root_elem(name):
+    return etree.Element(name)
