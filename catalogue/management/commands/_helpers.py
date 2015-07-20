@@ -71,17 +71,23 @@ def __modified_url(url):
 def create_entry(offer_ins):
     product = etree.Element('product')
     product_id = __create_sub_element(product, 'id', str(offer_ins.crc_id))
-    title = __create_sub_element(product, 'title',
-                                 CDATA(offer_ins.sku.product.full_name))
+    title = __create_sub_element(product, 'title')
+    if offer_ins.sku:
+        title.text = CDATA(offer_ins.sku.product.full_name)
+    else:
+        title.text = 'TYLKO SIM - %s' % offer_ins.promotion.code
     price = __create_sub_element(product, 'price', str(offer_ins.price))
     old_price = __create_sub_element(product, 'old_price',
                                      str(offer_ins.old_price))
     link = __create_sub_element(product, 'link', CDATA(offer_ins.product_page))
-    thumb = __create_sub_element(product, 'thumb', offer_ins.sku.photo)
-    status = __create_sub_element(
-        product, 'status',
-        __interpret_availability(offer_ins.sku.availability)[0]
-    )
+    thumb = __create_sub_element(product, 'thumb')
+    if offer_ins.sku:
+        thumb.text = offer_ins.sku.photo
+    status = __create_sub_element(product, 'status')
+    if offer_ins.sku:
+        status.text = __interpret_availability(offer_ins.sku.availability)[0]
+    else:
+        status.text = 1
     __categorization(product, offer_ins)
     custom = __create_sub_element(product, 'custom_1', __abo_price(offer_ins))
     return product
