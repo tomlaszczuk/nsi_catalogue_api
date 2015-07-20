@@ -119,3 +119,4 @@ STATIC_URL = '/static/'
 
 
 XML_FEED_DIR = os.path.join(BASE_DIR, 'xml')
+VALID_FILE_NAMES = ['all.xml', 'cheapest.xml']
