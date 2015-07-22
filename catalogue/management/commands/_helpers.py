@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from lxml import etree
 from lxml.etree import CDATA
 from lxml import objectify
@@ -53,15 +55,22 @@ def __categorization(parent, offer_ins):
 
 def __abo_price(offer_ins):
     segment = offer_ins.promotion.process_segmentation
+    monthly_fee = offer_ins.tariff_plan.monthly_fee
+    if offer_ins.promotion.is_smartdom:
+        if 'IND' in offer_ins.promotion.process_segmentation \
+                and 'POSTPAID' in offer_ins.promotion.process_segmentation:
+            monthly_fee -= 24.99
+        else:
+            monthly_fee /= 2
     if 'MIX' in segment:
-        return "%.2f zł x %d" % (offer_ins.tariff_plan.monthly_fee,
+        return "%.2f zł x %d" % (monthly_fee,
                                  offer_ins.promotion.agreement_length)
     elif 'SOHO' in segment:
         return "%.2f zł (%.2f zł z VAT)" % (
-            offer_ins.tariff_plan.monthly_fee,
-            offer_ins.tariff_plan.monthly_fee * 1.23
+            monthly_fee,
+            monthly_fee * 1.23
         )
-    return "%.2f zł" % offer_ins.tariff_plan.monthly_fee
+    return "%.2f zł" % monthly_fee
 
 
 def __modified_url(url):
@@ -72,23 +81,20 @@ def create_entry(offer_ins):
     product = etree.Element('product')
     product_id = __create_sub_element(product, 'id', str(offer_ins.crc_id))
     title = __create_sub_element(product, 'title')
-    if offer_ins.sku:
-        title.text = CDATA(offer_ins.sku.product.full_name)
-    else:
-        title.text = 'TYLKO SIM - %s' % offer_ins.promotion.code
     price = __create_sub_element(product, 'price', str(offer_ins.price))
     old_price = __create_sub_element(product, 'old_price',
                                      str(offer_ins.old_price))
     link = __create_sub_element(product, 'link', CDATA(offer_ins.product_page))
     thumb = __create_sub_element(product, 'thumb')
-    if offer_ins.sku:
-        thumb.text = offer_ins.sku.photo
     status = __create_sub_element(product, 'status')
-    if offer_ins.sku:
-        status.text = __interpret_availability(offer_ins.sku.availability)[0]
-    else:
-        status.text = 1
     __categorization(product, offer_ins)
+    if offer_ins.sku:
+        title.text = CDATA(offer_ins.sku.product.full_name)
+        status.text = __interpret_availability(offer_ins.sku.availability)[0]
+        thumb.text = offer_ins.sku.photo
+    else:
+        title.text = 'TYLKO SIM - %s' % offer_ins.promotion.code
+        status.text = '1'
     custom = __create_sub_element(product, 'custom_1', __abo_price(offer_ins))
     return product
 
