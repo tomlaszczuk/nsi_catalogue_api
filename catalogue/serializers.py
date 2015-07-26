@@ -69,6 +69,12 @@ class TariffPlanSerializer(serializers.ModelSerializer):
         model = TariffPlan
         fields = ('id', 'name', 'description', 'code', 'monthly_fee', 'links')
 
+    def save(self, **kwargs):
+        if self.instance:
+            if self.validated_data['monthly_fee'] < self.instance.monthly_fee:
+                self.validated_data['monthly_fee'] = self.instance.monthly_fee
+        super(TariffPlanSerializer, self).save(**kwargs)
+
     def get_links(self, obj):
         request = self.context['request']
         links = {
