@@ -22,4 +22,5 @@ class Command(BaseCommand):
             root.append(create_entry(offer))
         xml_str = etree.tostring(root, pretty_print=True, encoding='utf-8')
         with open(os.path.join(settings.XML_FEED_DIR, 'all.xml'), 'wb') as f:
+            f.write(b'<?xml version="1.0" encoding="UTF-8"?>\n')
             f.write(xml_str)

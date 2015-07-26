@@ -120,4 +120,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 XML_FEED_DIR = os.path.join(BASE_DIR, 'xml')
+XML_TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates', 'xml')
 VALID_FILE_NAMES = ['all.xml', 'cheapest.xml']

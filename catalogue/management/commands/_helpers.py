@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import date
 
 from lxml import etree
 from lxml.etree import CDATA
@@ -56,19 +57,13 @@ def __categorization(parent, offer_ins):
 def __abo_price(offer_ins):
     segment = offer_ins.promotion.process_segmentation
     monthly_fee = offer_ins.tariff_plan.monthly_fee
-    if offer_ins.promotion.is_smartdom:
-        if 'IND' in offer_ins.promotion.process_segmentation \
-                and 'POSTPAID' in offer_ins.promotion.process_segmentation:
-            monthly_fee -= 24.99
-        else:
-            monthly_fee /= 2
     if 'MIX' in segment:
         return "%.2f zł x %d" % (monthly_fee,
                                  offer_ins.promotion.agreement_length)
     elif 'SOHO' in segment:
         return "%.2f zł (%.2f zł z VAT)" % (
-            monthly_fee,
-            monthly_fee * 1.23
+            monthly_fee / 1.23,
+            monthly_fee
         )
     return "%.2f zł" % monthly_fee
 
@@ -144,3 +139,8 @@ def create_cheapest_entry(offer_ins):
 
 def create_root_elem(name):
     return etree.Element(name)
+
+
+def add_time_stamp(elem):
+    elem.attrib['timestamp'] = str(date.today())
+    return elem
