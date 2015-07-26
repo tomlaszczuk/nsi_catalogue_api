@@ -48,6 +48,7 @@ THIRD_PARTY_APPS = (
 LOCAL_APPS = (
     'catalogue',
     'feed_handler',
+    'users',
 )
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -123,3 +124,17 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 XML_FEED_DIR = os.path.join(BASE_DIR, 'xml')
 XML_TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates', 'xml')
 VALID_FILE_NAMES = ['all.xml', 'cheapest.xml']
+
+
+EMAIL_DOMAIN = 'gmail.com'
+EMAIL_ADMIN = os.environ.get('EMAIL_ADMIN')
+
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.environ.get('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASSWORD')
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+
+LOGIN_URL = '/auth/login/'

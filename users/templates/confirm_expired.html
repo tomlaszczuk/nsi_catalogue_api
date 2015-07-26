@@ -1,0 +1,22 @@
+{% extends "_base.html" %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Za późno</h1>
+    </div>
+    <p>
+        Klucz aktywacyjny dla tego konta stracił ważność. Jeżeli dalej chcesz wygenerować
+        kolejnego maila z potwierdzeniem wpisz swój adres email w formularz poniżej
+    </p>
+    <div class="form">
+        <form action="{% url "resend" %}" method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                {{ form }}
+            </div>
+            <div class="form-group">
+                <input type="submit" name="submit" class="btn btn-success" value="Stwórz konto">
+            </div>
+        </form>
+    </div>
+{% endblock %}

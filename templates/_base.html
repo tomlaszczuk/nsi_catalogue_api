@@ -17,15 +17,17 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li><a href="{% url 'home-page' %}">Generator</a></li>
-                    <li><a href="/admin">Admin</a></li>
+                    {% if user.is_authenticated %}
+                        <li><a href="/admin">Admin</a></li>
+                    {% endif %}
                     <li><a href="{% url 'api-root' %}">API Browser</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if user.is_authenticated %}
-                        <li><a href="#">Wyloguj</a></li>
+                        <li><a href="{% url 'logout' %}">Wyloguj</a></li>
                     {% else %}
-                        <li><a href="#">Rejestracja</a></li>
-                        <li><a href="#">Zaloguj</a></li>
+                        <li><a href="{% url 'register' %}">Rejestracja</a></li>
+                        <li><a href="{% url 'login' %}">Zaloguj</a></li>
                     {% endif %}
                 </ul>
             </div>

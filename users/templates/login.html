@@ -1,0 +1,23 @@
+{% extends "_base.html" %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>Zaloguj się</h1>
+    </div>
+    <form class="form-signup" method="POST">{% csrf_token %}
+    <br>
+    <div class="fieldWrapper">
+    {{form.errors.values.0}}
+        <label>Username</label><br>
+        {{ form.username }}
+    </div>
+    <br>
+    <div class="fieldWrapper">
+        {{form.errors.values.1}}
+        <label>Password</label><br>
+        {{ form.password }}
+    </div>
+    <br>
+    <input type="submit" name="submit" class="btn btn-success" value="Zaloguj">
+</form>
+{% endblock %}
