@@ -7,14 +7,14 @@
     <form class="form-signup" method="POST">{% csrf_token %}
     <br>
     <div class="fieldWrapper">
-    {{form.errors.values.0}}
-        <label>Username</label><br>
-        {{ form.username }}
+    {{form.email.errors}}
+        <label>Email</label><br>
+        {{ form.email }}
     </div>
     <br>
     <div class="fieldWrapper">
-        {{form.errors.values.1}}
-        <label>Password</label><br>
+        {{form.password.errors }}
+        <label>Hasło</label><br>
         {{ form.password }}
     </div>
     <br>

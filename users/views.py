@@ -21,13 +21,12 @@ def register_user(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             form.save()
-            username = form.cleaned_data['username']
             email = form.cleaned_data['email']
             salt = hashlib.sha1(str(random.random()).encode()).hexdigest()[:5]
             activation_key = hashlib.sha1((salt+email).encode()).hexdigest()
             key_expires = datetime.datetime.today() + datetime.timedelta(2)
 
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
 
             new_profile = UserProfile(user=user, activation_key=activation_key,
                                       key_expires=key_expires)
@@ -104,7 +103,7 @@ def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data['username']
+            username = form.cleaned_data['email']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
             if user is not None:
@@ -115,7 +114,7 @@ def login_view(request):
                     messages.add_message(request, messages.WARNING,
                                          'Potwierdź najpierw konto')
             else:
-                messages.add_message(request, messages.DANGER,
+                messages.add_message(request, messages.WARNING,
                                      'Zły login lub hasło')
     else:
         form = LoginForm()

@@ -13,7 +13,7 @@ class RegistrationForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('email', 'password1', 'password2')
 
     @staticmethod
     def _validate_email(email):
@@ -32,6 +32,7 @@ class RegistrationForm(UserCreationForm):
     def save(self, commit=True):
         user = super(RegistrationForm, self).save(commit=False)
         user.email = self.cleaned_data['email']
+        user.username = user.email
         if commit:
             user.is_active = False
             user.save()
@@ -39,7 +40,7 @@ class RegistrationForm(UserCreationForm):
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=255)
+    email = forms.EmailField()
     password = forms.CharField(widget=forms.PasswordInput)
 
 
