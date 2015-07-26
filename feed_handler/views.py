@@ -3,6 +3,7 @@ import os
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.core.management import call_command
 from django.core.servers.basehttp import FileWrapper
 from django.core.urlresolvers import reverse
@@ -12,11 +13,18 @@ from django.utils.encoding import smart_str
 from django.views.generic import TemplateView, View
 
 
-class HomePageTemplateView(TemplateView):
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
+
+
+class HomePageTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'home_page.html'
 
 
-class ManualFeedUpdateView(View):
+class ManualFeedUpdateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         call_command('xml_all')
         call_command('xml_cheapest')
